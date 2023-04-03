@@ -9,11 +9,11 @@ import numpy as np
 batch_size = 64
 
 # Load data
-train_dataset = datasets.MNIST(root='../data/', 
+train_dataset = datasets.MNIST(root='./data/', 
                                download=True, 
                                train=True, 
                                transform=transforms.ToTensor())
-test_dataset = datasets.MNIST(root='../data/', 
+test_dataset = datasets.MNIST(root='./data/', 
                                download=True, 
                                train=False, 
                                transform=transforms.ToTensor())
@@ -77,7 +77,10 @@ class CNN(nn.Module):
         # (b, 16, 14, 14) => (b, 32, 7, 7)
         out = self.cnn2(out)
         # (b, 32, 7, 7) => (b, 32*7*7)
+        # flattens
+        # so feature maps extracted by the convolutional layers into a format that can be fed into the fc.
         out = out.reshape(out.size(0), -1)
+        # Applies the fc to tensor
         out = self.fc(out)
         return out
 
@@ -91,26 +94,29 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 summary(model, input_size=(1, 28, 28), batch_size=batch_size)
 
 # Hyperparameters
-num_epochs = 3
-learning_rate = 1e-3
+epochs = 3
+learning_rate = 0.01
 
 # Define our loss
 criterion = nn.CrossEntropyLoss()
 optimzer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 total_batch = len(train_dataloader)
+print(f'The total batch is {total_batch}')
 
 # train the model
-for epoch in range(num_epochs):
+for epoch in range(epochs):
+    # loop batches
     for batch_idx, (images, labels) in enumerate(train_dataloader):
+
         images = images.to(device)
         labels = labels.to(device)
         
-        # forward
+        # forward: for the output and loss
         out = model(images)
         loss = criterion(out, labels)
         
-        # backward
+        # backward: update the step size by gradidents
         optimzer.zero_grad()
         loss.backward()
         optimzer.step() 
