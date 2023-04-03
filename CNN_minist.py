@@ -45,14 +45,15 @@ images, labels = next(iter(train_dataloader))
 images.shape
 
 # data
-fig = plt.figure(figsize=(5, 5))
-for i in range(25):
-    plt.subplot(5,5,i+1)
-    plt.tight_layout()
-    plt.imshow(images[i][0], cmap='gray', interpolation='none')
-    plt.title("gt {}".format(labels[i]))
-    plt.xticks([])
-    plt.yticks([])
+def show(images, labels):
+    fig = plt.figure(figsize=(5, 5))
+    for i in range(25):
+        plt.subplot(5,5,i+1)
+        plt.tight_layout()
+        plt.imshow(images[i][0], cmap='gray', interpolation='none')
+        plt.title("gt {}".format(labels[i]))
+        plt.xticks([])
+        plt.yticks([])
 
 # Hyperparameters
 input_shape = 28
@@ -77,9 +78,10 @@ class CNN(nn.Module):
         self.cnn2 = nn.Sequential(nn.Conv2d(in_channels=16, out_channels=32, 
                                             kernel_size=5, padding=2, stride=1), 
                                   nn.BatchNorm2d(32), 
-                                  nn.ReLU(), 
+                                  nn.ReLU(), ##non-linearity
                                   nn.MaxPool2d(kernel_size=2, stride=2))
-
+        # Input == output of the previous layers
+        # which is channels * reduced dimensions
         self.fc = nn.Linear(32*(input_shape//4)*(input_shape//4), num_classes)
 
     
