@@ -24,6 +24,21 @@ test_dataloader = torch.utils.data.DataLoader(dataset=test_dataset,
                                                shuffle=False, 
                                                batch_size=batch_size)
 
+# Basic analysis about the data
+
+# see the data shape
+print(train_dataset.data.shape, train_dataset.targets.shape)
+print(test_dataset.data.shape, test_dataset.targets.shape)
+
+# Look at the min and the max
+print(train_dataset.data.min(), train_dataset.data.max())
+
+# transfer to float to see the mean
+print(train_dataset.data.float().mean(), train_dataset.data.float().median())
+
+# classes in dataset
+train_dataset.classes
+
 images, labels = next(iter(train_dataloader))
 
 # batch_size, channels, height, weight
