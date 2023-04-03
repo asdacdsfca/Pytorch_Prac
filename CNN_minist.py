@@ -37,7 +37,7 @@ print(train_dataset.data.min(), train_dataset.data.max())
 print(train_dataset.data.float().mean(), train_dataset.data.float().median())
 
 # classes in dataset
-train_dataset.classes
+print(train_dataset.classes)
 
 images, labels = next(iter(train_dataloader))
 
@@ -117,31 +117,33 @@ total_batch = len(train_dataloader)
 print(f'The total batch is {total_batch}')
 
 # train the model
-for epoch in range(epochs):
-    # loop batches
-    for batch_idx, (images, labels) in enumerate(train_dataloader):
+def train(device, epochs, train_dataloader, criterion, optimzer, model):
+    for epoch in range(epochs):
+        # loop batches
+        for batch_idx, (images, labels) in enumerate(train_dataloader):
 
-        images = images.to(device)
-        labels = labels.to(device)
-        
-        # forward: for the output and loss
-        out = model(images)
-        loss = criterion(out, labels)
-        
-        # backward: update the step size by gradidents
-        optimzer.zero_grad()
-        loss.backward()
-        optimzer.step() 
+            images = images.to(device)
+            labels = labels.to(device)
+            
+            # forward: for the output and loss
+            out = model(images)
+            loss = criterion(out, labels)
+            
+            # backward: update the step size by gradidents
+            optimzer.zero_grad()
+            loss.backward()
+            optimzer.step() 
+
 
 # Evaluation
-total = 0
-correct = 0
-for images, labels in test_dataloader:
-    images = images.to(device)
-    labels = labels.to(device)
-    out = model(images)
-    preds = torch.argmax(out, dim=1)
-    
+def eval(test_dataloader, device, model):
+    total = 0
+    correct = 0
+    for images, labels in test_dataloader:
+        images = images.to(device)
+        labels = labels.to(device)
+        out = model(images)
+        preds = torch.argmax(out, dim=1)
     total += images.size(0)
     correct += (preds == labels).sum().item()
-print(f'{correct/total}')
+    print(f'{correct/total}')
