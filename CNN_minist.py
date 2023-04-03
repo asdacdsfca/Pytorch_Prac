@@ -103,7 +103,7 @@ model = CNN(input_shape=input_shape, num_classes=num_classes, in_channels=1).to(
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # As expected
-summary(model, input_size=(1, 28, 28), batch_size=batch_size)
+print(summary(model, input_size=(1, 28, 28), batch_size=batch_size))
 
 # Hyperparameters
 epochs = 3
