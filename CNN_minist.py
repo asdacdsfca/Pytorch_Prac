@@ -144,4 +144,4 @@ for images, labels in test_dataloader:
     
     total += images.size(0)
     correct += (preds == labels).sum().item()
-print(f'{correct}/{total}={correct/total}')
+print(f'{correct/total}')
