@@ -51,32 +51,29 @@ class CNN(nn.Module):
     # in_channels = dataset
     def __init__(self, input_shape, in_channels, num_classes):
         super(CNN, self).__init__()
-        # conv2d: (b, 1, 28, 28) => (b, 16, 28, 28)
-        # maxpool2d: (b, 16, 28, 28) => (b, 16, 14, 14)
+
         self.cnn1 = nn.Sequential(nn.Conv2d(in_channels=in_channels, out_channels=16, 
                                             kernel_size=5, padding=2, stride=1), 
                                   nn.BatchNorm2d(16), 
                                   nn.ReLU(), 
                                   nn.MaxPool2d(kernel_size=2, stride=2)) #change it from 28*28 to 44*44
         
-        # conv2d: (b, 16, 14, 14) => (b, 32, 14, 14)
-        # maxpool2d: (b, 32, 14, 14) => (b, 32, 7, 7)
+
         self.cnn2 = nn.Sequential(nn.Conv2d(in_channels=16, out_channels=32, 
                                             kernel_size=5, padding=2, stride=1), 
                                   nn.BatchNorm2d(32), 
                                   nn.ReLU(), 
                                   nn.MaxPool2d(kernel_size=2, stride=2))
-        # (b, 32, 7, 7) => (b, 32*7*7)
-        # (b, 32*7*7) => (b, 10)
+
         self.fc = nn.Linear(32*(input_shape//4)*(input_shape//4), num_classes)
 
     
     def forward(self, x):
-        # (b, 1, 28, 28) => (b, 16, 14, 14)
+
         out = self.cnn1(x)
-        # (b, 16, 14, 14) => (b, 32, 7, 7)
+
         out = self.cnn2(out)
-        # (b, 32, 7, 7) => (b, 32*7*7)
+
         # flattens
         # so feature maps extracted by the convolutional layers into a format that can be fed into the fc.
         out = out.reshape(out.size(0), -1)
