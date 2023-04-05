@@ -80,9 +80,15 @@ class CNN(nn.Module):
                                   nn.BatchNorm2d(32), 
                                   nn.ReLU(), ##non-linearity
                                   nn.MaxPool2d(kernel_size=2, stride=2))
+
+        self.cnn3 = nn.Sequential(nn.Conv2d(in_channels=32, out_channels=64, 
+                                            kernel_size=5, padding=2, stride=1), 
+                                  nn.BatchNorm2d(64), 
+                                  nn.ReLU(), ##non-linearity
+                                  nn.MaxPool2d(kernel_size=2, stride=2))
         # Input == output of the previous layers
         # which is channels * reduced dimensions
-        self.fc = nn.Linear(32*(input_shape//4)*(input_shape//4), num_classes)
+        self.fc = nn.Linear(64*(input_shape//8)*(input_shape//8), num_classes)
 
     
     def forward(self, x):
@@ -91,6 +97,7 @@ class CNN(nn.Module):
 
         out = self.cnn2(out)
 
+        out = self.cnn3(out)
         # flattens
         # so feature maps extracted by the convolutional layers into a format that can be fed into the fc.
         out = out.reshape(out.size(0), -1)
