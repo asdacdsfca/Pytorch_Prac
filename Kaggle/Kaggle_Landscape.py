@@ -9,7 +9,6 @@ import numpy as np
 import cv2
 import glob
 import torchvision
-import kaggle
 import timm
 
 data_dir = './data/Landscape/Landscape Classification/' 
@@ -51,6 +50,14 @@ def show(train_image_files):
     plt.show()
 
 class LandscapeDataset(Dataset):
+    # initialization/constructor
     def __init__(self, image_paths, transform=None):
         self.image_paths = image_paths
         self.transform = transform
+    
+    # create a method that returns the length of the image
+    def __len__(self):
+        return len(self.image_paths)
+    
+    def __getattrs__(self, idx):
+        
