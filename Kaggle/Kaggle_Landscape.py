@@ -49,6 +49,7 @@ def show(train_image_files):
     plt.tight_layout()
     plt.show()
 
+# Setting up the basic functions/methods
 class LandscapeDataset(Dataset):
     # initialization/constructor
     def __init__(self, image_paths, transform=None):
@@ -60,4 +61,54 @@ class LandscapeDataset(Dataset):
         return len(self.image_paths)
     
     def __getattrs__(self, idx):
-        
+        file_paths = self.image_paths[index]
+        image = cv2.imread(file_paths)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        label = image_filepath.split('/')[-2]
+        label = class_to_idx[label]
+        if self.transform is not None:
+            image = self.transform(image)
+        return image, label
+
+# We can check the size of the image by the following lines:
+# and the result should be 224
+print(timm.data.IMAGENET_DEFAULT_MEAN)
+print(timm.data.IMAGENET_DEFAULT_STD)
+
+# pre-trained model for trainning data
+train_transforms = transforms.Compose([
+    # python interpretable
+    transforms.ToPILImage(),
+    # because the mean size our image is 224, we'd like
+    # our model to be trained on that size
+    transforms.RandomResizedCrop(224,224),
+    # apply some sort of transformation to help trainning
+    transforms.RandomVerticalFlip(),
+    transforms.ToTensor(),
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+])
+
+# ore-trained model for validation data
+val_transforms = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.CenterCrop(224, 224),
+    transforms.ToTensor(),
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+])
+
+train_dataset = LandscapeDataset(train_image_files, train_transforms)
+val_dataset = LandscapeDataset(valid_image_files, val_transforms)
+test_dataset = LandscapeDataset(testing_image_files, val_transforms)
+
+def loaddata(dataset, batch):
+    if dataset == train_dataset:
+        DataLoader(dataset, batch_size = batch, shuffle = True)
+    else:
+        DataLoader(dataset, batch_size = batch)
+
+train_load = loaddata(train_dataset, 32)
+val_load = loaddata(val_dataset, 32)
+test_load = loaddata(test_dataset, 32)
+
+def clustering():
+    
